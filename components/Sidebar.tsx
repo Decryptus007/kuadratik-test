@@ -1,25 +1,47 @@
-import { Laptop, Smartphone, Headphones, Gamepad2, Camera, Tv, Wifi, Navigation } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { Range } from "react-range";
 
 const Sidebar = () => {
-  const [priceRange, setPriceRange] = useState([0]);
+  const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedPriceFilter, setSelectedPriceFilter] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value) || 0;
+    const clampedValue = Math.max(0, Math.min(value, priceRange[1] - 100));
+    setPriceRange([clampedValue, priceRange[1]]);
+  };
+
+  const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value) || 10000;
+    const clampedValue = Math.max(priceRange[0] + 100, Math.min(value, 10000));
+    setPriceRange([priceRange[0], clampedValue]);
+  };
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
 
   const categories = [
-    { icon: Smartphone, label: "Electronics Devices" },
-    { icon: Laptop, label: "Computer & Laptop" },
-    { icon: Laptop, label: "Computer Accessories" },
-    { icon: Smartphone, label: "SmartPhone" },
-    { icon: Headphones, label: "Headphone" },
-    { icon: Smartphone, label: "Mobile Accessories" },
-    { icon: Gamepad2, label: "Gaming Console" },
-    { icon: Camera, label: "Camera & Photo" },
-    { icon: Tv, label: "TV & Home Appliances" },
-    { icon: Wifi, label: "Watch & Accessories" },
-    { icon: Navigation, label: "GPS & Navigation" },
-    { icon: Laptop, label: "Wearable Technology" },
+    "Electronics Devices",
+    "Computer & Laptop",
+    "Computer Accessories",
+    "SmartPhone",
+    "Headphone",
+    "Mobile Accessories",
+    "Gaming Console",
+    "Camera & Photo",
+    "TV & Home Appliances",
+    "Watch & Accessories",
+    "GPS & Navigation",
+    "Wearable Technology",
   ];
 
   const brands = [
@@ -33,133 +55,228 @@ const Sidebar = () => {
   ];
 
   const tags = [
-    "Game", "iPhone", "TV", "Asus Laptops",
-    "Macbook", "SSD", "Graphics Card",
-    "Power Bank", "Smart TV", "Speaker",
-    "Tablet", "Microwave", "Samsung"
+    "Game",
+    "iPhone",
+    "TV",
+    "Asus Laptops",
+    "Macbook",
+    "SSD",
+    "Graphics Card",
+    "Power Bank",
+    "Smart TV",
+    "Speaker",
+    "Tablet",
+    "Microwave",
+    "Samsung",
   ];
 
   return (
     <aside className="w-64 shrink-0">
       {/* Categories */}
-      <div className="bg-card rounded-lg p-4 mb-4">
-        <h3 className="font-semibold mb-3 text-sm uppercase text-muted-foreground">
+      <div className="bg-card p-4 mb-4 border-b">
+        <h3 className="font-semibold mb-6 text-sm uppercase text-muted-foreground">
           Category
         </h3>
-        <div className="space-y-2">
-          {categories.map((category, index) => (
-            <button
+        <RadioGroup
+          value={selectedCategory}
+          onValueChange={setSelectedCategory}
+          className="space-y-2"
+        >
+          {categories.map((category, index: number) => (
+            <div
               key={index}
-              className="flex items-center gap-2 text-sm text-foreground/80 hover:text-primary transition-colors w-full text-left py-1"
+              className="flex items-center gap-2 text-base text-foreground/80 py-1"
             >
-              <category.icon className="h-4 w-4" />
-              <span>{category.label}</span>
-            </button>
+              <RadioGroupItem value={category} id={`category-${index}`} />
+              <Label htmlFor={`category-${index}`} className="cursor-pointer">
+                {category}
+              </Label>
+            </div>
           ))}
-        </div>
+        </RadioGroup>
       </div>
 
       {/* Price Range */}
-      <div className="bg-card rounded-lg p-4 mb-4">
+      <div className="bg-card border-b p-4 mb-4">
         <h3 className="font-semibold mb-3 text-sm uppercase text-muted-foreground">
           Price Range
         </h3>
-        <Slider
-          value={priceRange}
-          onValueChange={setPriceRange}
-          max={100}
-          step={1}
-          className="mb-4"
-        />
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>Min price</span>
-          <span>Max price</span>
+        <div className="mb-4">
+          <Range
+            step={100}
+            min={0}
+            max={10000}
+            values={priceRange}
+            onChange={(values) => setPriceRange(values)}
+            renderTrack={({ props, children }) => (
+              <div
+                {...props}
+                className="w-full h-1 bg-gray-200 rounded-lg relative"
+                style={{
+                  ...props.style,
+                }}
+              >
+                <div
+                  className="absolute h-1 bg-secondary rounded-lg"
+                  style={{
+                    left: `${((priceRange[0] - 0) / (10000 - 0)) * 100}%`,
+                    width: `${
+                      ((priceRange[1] - priceRange[0]) / (10000 - 0)) * 100
+                    }%`,
+                  }}
+                />
+                {children}
+              </div>
+            )}
+            renderThumb={({ props, isDragged }) => (
+              <div
+                {...props}
+                className={`w-4 h-4 bg-secondary rounded-full border-2 border-white shadow-md ${
+                  isDragged ? "shadow-lg" : ""
+                }`}
+                style={{
+                  ...props.style,
+                  outline: "none",
+                }}
+              />
+            )}
+          />
         </div>
-        <div className="flex gap-2 mt-2">
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-muted-foreground">$</span>
-            <input
-              type="text"
-              value="0"
-              className="w-16 px-2 py-1 text-sm border rounded"
-              readOnly
-            />
+        <div className="grid grid-cols-2 gap-2 mb-2">
+          <div className="space-y-1">
+            <Label
+              htmlFor="min-price"
+              className="text-xs text-muted-foreground"
+            >
+              Min Price
+            </Label>
+            <div className="relative">
+              <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm">
+                $
+              </span>
+              <Input
+                id="min-price"
+                type="number"
+                value={priceRange[0]}
+                onChange={handleMinPriceChange}
+                className="pl-6 h-8 text-sm"
+                min={0}
+                max={priceRange[1] - 100}
+                step={100}
+              />
+            </div>
           </div>
-          <span className="text-muted-foreground">-</span>
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-muted-foreground">$</span>
-            <input
-              type="text"
-              value="10000"
-              className="w-20 px-2 py-1 text-sm border rounded"
-              readOnly
-            />
+          <div className="space-y-1">
+            <Label
+              htmlFor="max-price"
+              className="text-xs text-muted-foreground"
+            >
+              Max Price
+            </Label>
+            <div className="relative">
+              <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm">
+                $
+              </span>
+              <Input
+                id="max-price"
+                type="number"
+                value={priceRange[1]}
+                onChange={handleMaxPriceChange}
+                className="pl-6 h-8 text-sm"
+                min={priceRange[0] + 100}
+                max={10000}
+                step={100}
+              />
+            </div>
           </div>
         </div>
-        <div className="space-y-2 mt-4">
-          <label className="flex items-center gap-2 text-sm">
-            <Checkbox />
-            <span>All Price</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <Checkbox />
-            <span>Under $20</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <Checkbox />
-            <span>$25 to $100</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <Checkbox />
-            <span>$100 to $300</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <Checkbox />
-            <span>$300 to $500</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <Checkbox />
-            <span>$500 to $1,000</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <Checkbox />
-            <span>$1,000 to $10,000</span>
-          </label>
-        </div>
+        <RadioGroup
+          value={selectedPriceFilter}
+          onValueChange={setSelectedPriceFilter}
+          className="space-y-2 mt-4"
+        >
+          <div className="flex items-center gap-2 text-sm">
+            <RadioGroupItem value="all" id="price-all" />
+            <Label htmlFor="price-all" className="cursor-pointer">
+              All Price
+            </Label>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <RadioGroupItem value="under-20" id="price-under-20" />
+            <Label htmlFor="price-under-20" className="cursor-pointer">
+              Under $20
+            </Label>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <RadioGroupItem value="25-100" id="price-25-100" />
+            <Label htmlFor="price-25-100" className="cursor-pointer">
+              $25 to $100
+            </Label>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <RadioGroupItem value="100-300" id="price-100-300" />
+            <Label htmlFor="price-100-300" className="cursor-pointer">
+              $100 to $300
+            </Label>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <RadioGroupItem value="300-500" id="price-300-500" />
+            <Label htmlFor="price-300-500" className="cursor-pointer">
+              $300 to $500
+            </Label>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <RadioGroupItem value="500-1000" id="price-500-1000" />
+            <Label htmlFor="price-500-1000" className="cursor-pointer">
+              $500 to $1,000
+            </Label>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <RadioGroupItem value="1000-10000" id="price-1000-10000" />
+            <Label htmlFor="price-1000-10000" className="cursor-pointer">
+              $1,000 to $10,000
+            </Label>
+          </div>
+        </RadioGroup>
       </div>
 
       {/* Popular Brands */}
-      <div className="bg-card rounded-lg p-4 mb-4">
+      <div className="bg-card border-b p-4 mb-4">
         <h3 className="font-semibold mb-3 text-sm uppercase text-muted-foreground">
           Popular Brands
         </h3>
-        <div className="space-y-2">
+        <div className="grid gap-2 grid-cols-2">
           {brands.map((brand, index) => (
-            <label key={index} className="flex items-center gap-2 text-sm">
+            <label key={index} className="flex items-center gap-2 text-xs">
               <Checkbox />
               <span className="flex-1">{brand.name}</span>
-              {brand.count > 0 && (
-                <span className="text-muted-foreground">({brand.count})</span>
-              )}
             </label>
           ))}
         </div>
       </div>
 
       {/* Popular Tags */}
-      <div className="bg-card rounded-lg p-4">
+      <div className="bg-card p-4">
         <h3 className="font-semibold mb-3 text-sm uppercase text-muted-foreground">
           Popular Tag
         </h3>
         <div className="flex flex-wrap gap-2">
-          {tags.map((tag, index) => (
-            <button
-              key={index}
-              className="px-3 py-1 text-xs bg-secondary hover:bg-secondary/80 rounded-full transition-colors"
-            >
-              {tag}
-            </button>
-          ))}
+          {tags.map((tag, index) => {
+            const isSelected = selectedTags.includes(tag);
+            return (
+              <button
+                key={index}
+                onClick={() => toggleTag(tag)}
+                className={`px-3 py-1 text-xs rounded-lg transition-colors ${
+                  isSelected
+                    ? "bg-secondary/10 text-secondary border border-secondary hover:bg-secondary/80"
+                    : "bg-white text-black border border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                {tag}
+              </button>
+            );
+          })}
         </div>
       </div>
     </aside>

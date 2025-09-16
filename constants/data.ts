@@ -204,7 +204,7 @@ export const promoProducts = [
     title: "Apple Watch",
     subtitle: "Heavy on Features.\nLight on Price.",
     price: "$299 USD",
-    bgColor: "bg-card",
+    bgColor: "bg-secondary",
     discount: "UP to 80% OFF",
   },
   {
@@ -212,7 +212,7 @@ export const promoProducts = [
     title: "realme",
     subtitle: "",
     price: "",
-    bgColor: "bg-warning",
+    bgColor: "bg-background",
     discount: "UP to 80% OFF",
   },
   {

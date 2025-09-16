@@ -89,7 +89,7 @@ const Navigation = () => {
                 variant="ghost"
                 className="h-9 px-3 font-normal whitespace-nowrap"
               >
-                {item.icon && <item.icon className="h-4 w-4 mr-2" />}
+                {item.icon && <item.icon className="h-4 w-4" />}
                 <span>{item.label}</span>
               </Button>
             ))}
