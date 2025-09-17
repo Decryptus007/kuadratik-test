@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { ArrowLeft, ArrowRight, Filter } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -12,12 +12,36 @@ import MobileSidebar from "@/components/MobileSidebar";
 import SortBar from "@/components/SortBar";
 import ProductCard from "@/components/ProductCard";
 import Footer from "@/components/Footer";
-import { products, promoProducts } from "@/constants/data";
+import {
+  useGetProductsQuery,
+  useGetCategoriesQuery,
+  useGetProductsByCategoryQuery,
+} from "@/lib/apiSlice";
+import PageSkeleton from "@/components/PageSkeleton";
 
 export default function Home() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [desktopCurrentSlide, setDesktopCurrentSlide] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const { data: categories } = useGetCategoriesQuery();
+  const {
+    data: allProducts,
+    isLoading: isLoadingAll,
+    error: errorAll,
+  } = useGetProductsQuery();
+  const {
+    data: categoryProducts,
+    isLoading: isLoadingCategory,
+    error: errorCategory,
+  } = useGetProductsByCategoryQuery(selectedCategory || "", {
+    skip: !selectedCategory,
+  });
+
+  const products = selectedCategory ? categoryProducts : allProducts;
+  const isLoading = selectedCategory ? isLoadingCategory : isLoadingAll;
+  const error = selectedCategory ? errorCategory : errorAll;
 
   const sponsoredImages = [
     "/assets/sponsored-1.png",
@@ -36,10 +60,34 @@ export default function Home() {
     setDesktopCurrentSlide(index);
   };
 
+  if (isLoading) {
+    return <PageSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div>Error loading products</div>
+      </div>
+    );
+  }
+
+  if (!products) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div>No products available</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       <Header onMenuClick={() => setMobileSidebarOpen(true)} />
-      <Navigation />
+      <Navigation
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+      />
 
       <main className="container mx-auto px-2 md:px-4">
         <HeroBanner />
@@ -47,19 +95,26 @@ export default function Home() {
         <div className="flex gap-4 md:gap-6 mt-4 md:mt-6">
           {/* Desktop Sidebar */}
           <div className="hidden lg:block">
-            <Sidebar />
+            <Sidebar
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
           </div>
 
           {/* Mobile Sidebar */}
           <MobileSidebar
             open={mobileSidebarOpen}
             onOpenChange={setMobileSidebarOpen}
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
           />
 
           <div className="flex-1">
             <SortBar
               setMobileSidebarOpen={setMobileSidebarOpen}
-              totalProducts={50867}
+              totalProducts={products.length}
             />
 
             {/* Product Grid - Responsive columns */}
@@ -172,15 +227,16 @@ export default function Home() {
               <Button
                 size={"icon"}
                 variant={"outline"}
+                disabled
                 className="px-4 py-2 rounded-full"
               >
                 <ArrowLeft />
               </Button>
-              {[...Array(5)].map((_, i) => (
+              {[...Array(1)].map((_, i) => (
                 <Button
                   key={i}
                   size={"icon"}
-                  variant={"outline"}
+                  variant={"secondary"}
                   className="px-4 py-2 rounded-full"
                 >
                   {i + 1}
@@ -189,6 +245,7 @@ export default function Home() {
               <Button
                 size={"icon"}
                 variant={"outline"}
+                disabled
                 className="px-4 py-2 rounded-full"
               >
                 <ArrowRight />

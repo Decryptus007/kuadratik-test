@@ -5,11 +5,23 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Range } from "react-range";
 
-const Sidebar = () => {
+interface SidebarProps {
+  categories?: string[];
+  selectedCategory?: string | null;
+  onCategoryChange?: (category: string | null) => void;
+}
+
+const Sidebar = ({
+  categories: apiCategories = [],
+  selectedCategory: propSelectedCategory,
+  onCategoryChange,
+}: SidebarProps) => {
   const [priceRange, setPriceRange] = useState([0, 10000]);
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedPriceFilter, setSelectedPriceFilter] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // Use prop value or empty string for RadioGroup
+  const currentSelectedCategory = propSelectedCategory || "";
 
   const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 0;
@@ -29,20 +41,8 @@ const Sidebar = () => {
     );
   };
 
-  const categories = [
-    "Electronics Devices",
-    "Computer & Laptop",
-    "Computer Accessories",
-    "SmartPhone",
-    "Headphone",
-    "Mobile Accessories",
-    "Gaming Console",
-    "Camera & Photo",
-    "TV & Home Appliances",
-    "Watch & Accessories",
-    "GPS & Navigation",
-    "Wearable Technology",
-  ];
+  // Combine API categories with "All" option
+  const allCategories = ["All", ...apiCategories];
 
   const brands = [
     { name: "Apple", count: 2 },
@@ -78,18 +78,25 @@ const Sidebar = () => {
           Category
         </h3>
         <RadioGroup
-          value={selectedCategory}
-          onValueChange={setSelectedCategory}
+          value={currentSelectedCategory || "All"}
+          onValueChange={(value) => {
+            if (onCategoryChange) {
+              onCategoryChange(value === "All" ? null : value);
+            }
+          }}
           className="space-y-2"
         >
-          {categories.map((category, index: number) => (
+          {allCategories.map((category: string, index: number) => (
             <div
               key={index}
               className="flex items-center gap-2 text-base text-foreground/80 py-1"
             >
               <RadioGroupItem value={category} id={`category-${index}`} />
-              <Label htmlFor={`category-${index}`} className="cursor-pointer">
-                {category}
+              <Label
+                htmlFor={`category-${index}`}
+                className="cursor-pointer capitalize"
+              >
+                {category.replace(/['"]+/g, "")}
               </Label>
             </div>
           ))}

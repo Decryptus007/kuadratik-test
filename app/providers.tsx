@@ -3,14 +3,13 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AnimatedCursor from "react-animated-cursor";
-
-const queryClient = new QueryClient();
+import { Provider } from "react-redux";
+import { store } from "@/lib/store";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -23,6 +22,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         />
         {children}
       </TooltipProvider>
-    </QueryClientProvider>
+    </Provider>
   );
 }

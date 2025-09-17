@@ -24,6 +24,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import Image from "next/image";
+import { useSelector } from "react-redux";
+import { store } from "@/lib/store";
+import { CartItem } from "@/lib/cartSlice";
+import CartSidebar from "./CartSidebar";
+
+type RootState = ReturnType<typeof store.getState>;
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -31,6 +37,12 @@ interface HeaderProps {
 
 const Header = ({ onMenuClick }: HeaderProps) => {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const cartItems = useSelector((state: any) => state.cart.items);
+  const cartCount = cartItems.reduce(
+    (total: number, item: CartItem) => total + item.quantity,
+    0
+  );
 
   return (
     <header className="sticky top-0 bg-white z-40">
@@ -91,7 +103,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
             <div className="relative w-full">
               <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2" />
               <Input
-                type="text"
+                type="search"
                 placeholder="Search for products..."
                 className="pl-10 bg-background"
               />
@@ -144,10 +156,11 @@ const Header = ({ onMenuClick }: HeaderProps) => {
               variant="ghost"
               size="icon"
               className="relative h-8 w-8 md:h-9 md:w-9"
+              onClick={() => setCartOpen(true)}
             >
               <ShoppingCart className="h-4 w-4 md:h-5 md:w-5" />
               <span className="absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-primary rounded-full text-primary-foreground text-[10px] md:text-xs flex items-center justify-center">
-                0
+                {cartCount}
               </span>
             </Button>
           </div>
@@ -173,6 +186,8 @@ const Header = ({ onMenuClick }: HeaderProps) => {
           </div>
         )}
       </div>
+
+      <CartSidebar open={cartOpen} onOpenChange={setCartOpen} />
     </header>
   );
 };

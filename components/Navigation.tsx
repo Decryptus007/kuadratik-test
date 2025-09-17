@@ -19,7 +19,17 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-const Navigation = () => {
+interface NavigationProps {
+  categories?: string[];
+  selectedCategory?: string | null;
+  onCategoryChange?: (category: string | null) => void;
+}
+
+const Navigation = ({
+  categories = [],
+  selectedCategory,
+  onCategoryChange,
+}: NavigationProps) => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
 
@@ -33,18 +43,8 @@ const Navigation = () => {
     { icon: Headphones, label: "Customer Service" },
   ];
 
-  const categories = [
-    "Electronics",
-    "Clothing & Fashion",
-    "Home & Garden",
-    "Sports & Outdoors",
-    "Books & Media",
-    "Health & Beauty",
-    "Automotive",
-    "Toys & Games",
-    "Food & Beverages",
-    "Office Supplies",
-  ];
+  // Use API categories if available, otherwise use empty array
+  const displayCategories = categories.length > 0 ? categories : [];
 
   return (
     <nav className="bg-background">
@@ -68,14 +68,29 @@ const Navigation = () => {
               </SheetHeader>
               <div className="mt-6">
                 <div className="space-y-2">
-                  {categories.map((category, index) => (
+                  <Button
+                    variant={selectedCategory === null ? "secondary" : "ghost"}
+                    className="w-full justify-start h-10 px-3"
+                    onClick={() => {
+                      if (onCategoryChange) onCategoryChange(null);
+                      setCategoriesOpen(false);
+                    }}
+                  >
+                    All Categories
+                  </Button>
+                  {displayCategories.map((category: string, index: number) => (
                     <Button
                       key={index}
-                      variant="ghost"
-                      className="w-full justify-start h-10 px-3"
-                      onClick={() => setCategoriesOpen(false)}
+                      variant={
+                        selectedCategory === category ? "secondary" : "ghost"
+                      }
+                      className="w-full justify-start h-10 px-3 capitalize"
+                      onClick={() => {
+                        if (onCategoryChange) onCategoryChange(category);
+                        setCategoriesOpen(false);
+                      }}
                     >
-                      {category}
+                      {category.replace(/['"]+/g, "")}
                     </Button>
                   ))}
                 </div>
