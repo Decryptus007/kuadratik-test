@@ -83,7 +83,7 @@ const Sidebar = ({
   ];
 
   return (
-    <aside className="w-64 shrink-0">
+    <aside className="w-64 pb-10 lg:pb-4 shrink-0">
       {/* Categories */}
       <div className="bg-card p-4 mb-4 border-b">
         <h3 className="font-semibold mb-6 text-sm uppercase text-muted-foreground">
