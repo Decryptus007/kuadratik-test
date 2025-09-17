@@ -2,11 +2,13 @@ import { Star, Heart, ShoppingCart, Eye } from "lucide-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/lib/cartSlice";
+import { addToSave, removeFromSave } from "@/lib/saveSlice";
 import { Product } from "@/lib/apiSlice";
 import ProductDetailsModal from "./ProductDetailsModal";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { store } from "@/lib/store";
+import Image from "next/image";
 
 type RootState = ReturnType<typeof store.getState>;
 
@@ -23,12 +25,43 @@ const ProductCard = (product: ProductCardProps) => {
     cartItems.find((item: any) => item.product.id === product.id)?.quantity ||
     0;
 
+  // Get saved items to check if product is saved
+  const savedItems = useSelector((state: any) => state.save.items);
+  const isSaved = savedItems.some(
+    (item: any) => item.product.id === product.id
+  );
+
   const handleAddToCart = () => {
+    const existingItem = cartItems.find(
+      (item: any) => item.product.id === product.id
+    );
+    const isNewItem = !existingItem;
+
     dispatch(addToCart(product));
-    toast({
-      title: "Added to cart",
-      description: `${product.title} has been added to your cart.`,
-    });
+
+    // Only show toast for newly added items
+    if (isNewItem) {
+      toast({
+        title: "Added to cart",
+        description: `${product.title} has been added to your cart.`,
+      });
+    }
+  };
+
+  const handleToggleSave = () => {
+    if (isSaved) {
+      dispatch(removeFromSave(product.id));
+      toast({
+        title: "Removed from saved",
+        description: `${product.title} has been removed from your saved items.`,
+      });
+    } else {
+      dispatch(addToSave(product));
+      toast({
+        title: "Added to saved",
+        description: `${product.title} has been saved to your favorites.`,
+      });
+    }
   };
 
   const handleViewDetails = () => {
@@ -38,10 +71,11 @@ const ProductCard = (product: ProductCardProps) => {
   return (
     <div className="bg-card rounded-lg p-3 md:p-4 hover:border hover:border-secondary transition-shadow group cursor-pointer">
       <div className="aspect-square bg-background rounded-lg mb-2 md:mb-3 overflow-hidden relative">
-        <img
+        <Image
           src={product.image}
           alt={product.title}
-          className="w-full h-full object-contain group-hover:scale-105 transition-transform"
+          fill
+          className="object-contain group-hover:scale-105 transition-transform"
         />
 
         {/* Hover Overlay */}
@@ -50,9 +84,12 @@ const ProductCard = (product: ProductCardProps) => {
             <Button
               size="icon"
               variant="secondary"
-              className="size-8 md:size-12 bg-white text-black rounded-full hover:bg-secondary hover:text-white transition-colors shadow-md"
+              onClick={handleToggleSave}
+              className={`size-8 md:size-12 bg-white text-black rounded-full hover:bg-secondary hover:text-white transition-colors shadow-md ${
+                isSaved ? "text-red-500" : ""
+              }`}
             >
-              <Heart className="w-4 h-4" />
+              <Heart className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
             </Button>
             <div className="relative">
               <Button

@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 const slides = [
   {
@@ -81,11 +82,13 @@ const HeroBanner = () => {
                     {slide.discount}
                   </p>
                 </div>
-                <div className="hidden sm:block">
-                  <img
+                <div className="hidden sm:block relative w-32 h-32 md:w-48 md:h-48 lg:w-64 lg:h-64">
+                  <Image
                     src={slide.image}
                     alt={slide.alt}
-                    className="w-32 h-32 md:w-48 md:h-48 lg:w-64 lg:h-64 object-contain"
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 128px, (max-width: 1024px) 192px, 256px"
                   />
                 </div>
               </div>

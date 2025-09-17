@@ -9,36 +9,56 @@ interface SidebarProps {
   categories?: string[];
   selectedCategory?: string | null;
   onCategoryChange?: (category: string | null) => void;
+  priceRange?: [number, number];
+  onPriceRangeChange?: (range: [number, number]) => void;
+  selectedBrands?: string[];
+  onBrandsChange?: (brands: string[]) => void;
+  selectedTags?: string[];
+  onTagsChange?: (tags: string[]) => void;
 }
 
 const Sidebar = ({
   categories: apiCategories = [],
   selectedCategory: propSelectedCategory,
   onCategoryChange,
+  priceRange: propPriceRange = [0, 10000],
+  onPriceRangeChange,
+  selectedBrands: propSelectedBrands = [],
+  onBrandsChange,
+  selectedTags: propSelectedTags = [],
+  onTagsChange,
 }: SidebarProps) => {
-  const [priceRange, setPriceRange] = useState([0, 10000]);
   const [selectedPriceFilter, setSelectedPriceFilter] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  // Use prop value or empty string for RadioGroup
+  // Use prop values or defaults
   const currentSelectedCategory = propSelectedCategory || "";
+  const priceRange = propPriceRange;
+  const selectedTags = propSelectedTags;
+  const selectedBrands = propSelectedBrands;
 
   const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 0;
     const clampedValue = Math.max(0, Math.min(value, priceRange[1] - 100));
-    setPriceRange([clampedValue, priceRange[1]]);
+    if (onPriceRangeChange) {
+      onPriceRangeChange([clampedValue, priceRange[1]]);
+    }
   };
 
   const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 10000;
     const clampedValue = Math.max(priceRange[0] + 100, Math.min(value, 10000));
-    setPriceRange([priceRange[0], clampedValue]);
+    if (onPriceRangeChange) {
+      onPriceRangeChange([priceRange[0], clampedValue]);
+    }
   };
 
   const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
+    if (onTagsChange) {
+      const newTags = selectedTags.includes(tag)
+        ? selectedTags.filter((t: string) => t !== tag)
+        : [...selectedTags, tag];
+      onTagsChange(newTags);
+    }
   };
 
   // Combine API categories with "All" option
@@ -114,7 +134,11 @@ const Sidebar = ({
             min={0}
             max={10000}
             values={priceRange}
-            onChange={(values) => setPriceRange(values)}
+            onChange={(values) => {
+              if (onPriceRangeChange) {
+                onPriceRangeChange(values as [number, number]);
+              }
+            }}
             renderTrack={({ props, children }) => (
               <div
                 {...props}
@@ -199,7 +223,36 @@ const Sidebar = ({
         </div>
         <RadioGroup
           value={selectedPriceFilter}
-          onValueChange={setSelectedPriceFilter}
+          onValueChange={(value) => {
+            setSelectedPriceFilter(value);
+            // Set price range based on selected preset
+            if (onPriceRangeChange) {
+              switch (value) {
+                case "under-20":
+                  onPriceRangeChange([0, 20]);
+                  break;
+                case "25-100":
+                  onPriceRangeChange([25, 100]);
+                  break;
+                case "100-300":
+                  onPriceRangeChange([100, 300]);
+                  break;
+                case "300-500":
+                  onPriceRangeChange([300, 500]);
+                  break;
+                case "500-1000":
+                  onPriceRangeChange([500, 1000]);
+                  break;
+                case "1000-10000":
+                  onPriceRangeChange([1000, 10000]);
+                  break;
+                case "all":
+                default:
+                  onPriceRangeChange([0, 10000]);
+                  break;
+              }
+            }
+          }}
           className="space-y-2 mt-4"
         >
           <div className="flex items-center gap-2 text-sm">
@@ -253,12 +306,28 @@ const Sidebar = ({
           Popular Brands
         </h3>
         <div className="grid gap-2 grid-cols-2">
-          {brands.map((brand, index) => (
-            <label key={index} className="flex items-center gap-2 text-xs">
-              <Checkbox />
-              <span className="flex-1">{brand.name}</span>
-            </label>
-          ))}
+          {brands.map((brand, index) => {
+            const isSelected = selectedBrands?.includes(brand.name) || false;
+            return (
+              <label key={index} className="flex items-center gap-2 text-xs">
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={(checked) => {
+                    if (onBrandsChange) {
+                      if (checked) {
+                        onBrandsChange([...(selectedBrands || []), brand.name]);
+                      } else {
+                        onBrandsChange(
+                          (selectedBrands || []).filter((b) => b !== brand.name)
+                        );
+                      }
+                    }
+                  }}
+                />
+                <span className="flex-1">{brand.name}</span>
+              </label>
+            );
+          })}
         </div>
       </div>
 

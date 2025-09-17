@@ -28,21 +28,32 @@ import { useSelector } from "react-redux";
 import { store } from "@/lib/store";
 import { CartItem } from "@/lib/cartSlice";
 import CartSidebar from "./CartSidebar";
+import SaveSidebar from "./SaveSidebar";
 
 type RootState = ReturnType<typeof store.getState>;
 
 interface HeaderProps {
   onMenuClick?: () => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
 }
 
-const Header = ({ onMenuClick }: HeaderProps) => {
+const Header = ({
+  onMenuClick,
+  searchQuery = "",
+  onSearchChange,
+}: HeaderProps) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const cartItems = useSelector((state: any) => state.cart.items);
+  const [saveOpen, setSaveOpen] = useState(false);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartCount = cartItems.reduce(
-    (total: number, item: CartItem) => total + item.quantity,
+    (total: number, item) => total + item.quantity,
     0
   );
+
+  const savedItems = useSelector((state: RootState) => state.save.items);
+  const saveCount = savedItems.length;
 
   return (
     <header className="sticky top-0 bg-white z-40">
@@ -99,13 +110,15 @@ const Header = ({ onMenuClick }: HeaderProps) => {
           </div>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-[600px]">
+          <div className="hidden sm:flex flex-1 max-w-[600px]">
             <div className="relative w-full">
               <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2" />
               <Input
                 type="search"
                 placeholder="Search for products..."
                 className="pl-10 bg-background"
+                value={searchQuery}
+                onChange={(e) => onSearchChange?.(e.target.value)}
               />
             </div>
           </div>
@@ -114,7 +127,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="sm:hidden"
             onClick={() => setSearchOpen(!searchOpen)}
           >
             <Search className="h-5 w-5" />
@@ -145,10 +158,11 @@ const Header = ({ onMenuClick }: HeaderProps) => {
               variant="ghost"
               size="icon"
               className="relative h-8 w-8 md:h-9 md:w-9 hidden sm:flex"
+              onClick={() => setSaveOpen(true)}
             >
               <Heart className="h-4 w-4 md:h-5 md:w-5" />
               <span className="absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-primary rounded-full text-primary-foreground text-[10px] md:text-xs flex items-center justify-center">
-                0
+                {saveCount}
               </span>
             </Button>
 
@@ -168,26 +182,23 @@ const Header = ({ onMenuClick }: HeaderProps) => {
 
         {/* Mobile Search Bar */}
         {searchOpen && (
-          <div className="md:hidden pb-3">
+          <div className="sm:hidden pb-3">
             <div className="relative">
+              <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2" />
               <Input
-                type="text"
+                type="search"
                 placeholder="Search for products..."
-                className="pr-10 bg-card"
-                autoFocus
+                className="pl-10 bg-background"
+                value={searchQuery}
+                onChange={(e) => onSearchChange?.(e.target.value)}
               />
-              <Button
-                size="sm"
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-7 px-3"
-              >
-                <Search className="h-4 w-4" />
-              </Button>
             </div>
           </div>
         )}
       </div>
 
       <CartSidebar open={cartOpen} onOpenChange={setCartOpen} />
+      <SaveSidebar open={saveOpen} onOpenChange={setSaveOpen} />
     </header>
   );
 };

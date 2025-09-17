@@ -22,8 +22,11 @@ export const apiSlice = createApi({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || "https://fakestoreapi.com",
   }),
   endpoints: (builder) => ({
-    getProducts: builder.query<ProductsResponse, void>({
-      query: () => "/products",
+    getProducts: builder.query<ProductsResponse, { sort?: string }>({
+      query: (params) => {
+        const queryParams = params?.sort ? `?sort=${params.sort}` : "";
+        return `/products${queryParams}`;
+      },
     }),
     getProduct: builder.query<Product, number>({
       query: (id) => `/products/${id}`,

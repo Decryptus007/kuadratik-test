@@ -12,6 +12,12 @@ interface MobileSidebarProps {
   categories?: string[];
   selectedCategory?: string | null;
   onCategoryChange?: (category: string | null) => void;
+  priceRange?: [number, number];
+  onPriceRangeChange?: (range: [number, number]) => void;
+  selectedBrands?: string[];
+  onBrandsChange?: (brands: string[]) => void;
+  selectedTags?: string[];
+  onTagsChange?: (tags: string[]) => void;
 }
 
 const MobileSidebar = ({
@@ -20,6 +26,12 @@ const MobileSidebar = ({
   categories,
   selectedCategory,
   onCategoryChange,
+  priceRange,
+  onPriceRangeChange,
+  selectedBrands,
+  onBrandsChange,
+  selectedTags,
+  onTagsChange,
 }: MobileSidebarProps) => {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -32,6 +44,12 @@ const MobileSidebar = ({
             categories={categories}
             selectedCategory={selectedCategory}
             onCategoryChange={onCategoryChange}
+            priceRange={priceRange}
+            onPriceRangeChange={onPriceRangeChange}
+            selectedBrands={selectedBrands}
+            onBrandsChange={onBrandsChange}
+            selectedTags={selectedTags}
+            onTagsChange={onTagsChange}
           />
         </div>
       </SheetContent>

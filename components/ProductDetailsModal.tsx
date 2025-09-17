@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Product } from "@/lib/apiSlice";
+import Image from "next/image";
 
 interface ProductDetailsModalProps {
   product: Product | null;
@@ -32,11 +33,12 @@ const ProductDetailsModal = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Product Image */}
-          <div className="aspect-square bg-background rounded-lg overflow-hidden">
-            <img
+          <div className="aspect-square bg-background rounded-lg overflow-hidden relative">
+            <Image
               src={product.image}
               alt={product.title}
-              className="w-full h-full object-contain"
+              fill
+              className="object-contain"
             />
           </div>
 
