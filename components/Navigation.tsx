@@ -30,7 +30,6 @@ const Navigation = ({
   selectedCategory,
   onCategoryChange,
 }: NavigationProps) => {
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   const navItems = [

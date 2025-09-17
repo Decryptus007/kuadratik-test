@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { X, Plus, Minus, Trash2 } from "lucide-react";
+import { Plus, Minus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -21,7 +21,7 @@ interface CartSidebarProps {
 
 const CartSidebar = ({ open, onOpenChange }: CartSidebarProps) => {
   const dispatch = useDispatch();
-  const cartItems = useSelector((state: any) => state.cart.items);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
   const handleRemove = (id: number) => {
     dispatch(removeFromCart(id));

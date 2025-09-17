@@ -12,7 +12,7 @@ import Image from "next/image";
 
 type RootState = ReturnType<typeof store.getState>;
 
-interface ProductCardProps extends Product {}
+type ProductCardProps = Product;
 
 const ProductCard = (product: ProductCardProps) => {
   const dispatch = useDispatch();
@@ -20,20 +20,17 @@ const ProductCard = (product: ProductCardProps) => {
   const { toast } = useToast();
 
   // Get cart items to show quantity badge
-  const cartItems = useSelector((state: any) => state.cart.items);
+  const cartItems = useSelector((state: RootState) => state.cart.items);
   const productQuantity =
-    cartItems.find((item: any) => item.product.id === product.id)?.quantity ||
-    0;
+    cartItems.find((item) => item.product.id === product.id)?.quantity || 0;
 
   // Get saved items to check if product is saved
-  const savedItems = useSelector((state: any) => state.save.items);
-  const isSaved = savedItems.some(
-    (item: any) => item.product.id === product.id
-  );
+  const savedItems = useSelector((state: RootState) => state.save.items);
+  const isSaved = savedItems.some((item) => item.product.id === product.id);
 
   const handleAddToCart = () => {
     const existingItem = cartItems.find(
-      (item: any) => item.product.id === product.id
+      (item) => item.product.id === product.id
     );
     const isNewItem = !existingItem;
 

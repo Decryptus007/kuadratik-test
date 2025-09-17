@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { X, Heart, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -12,6 +12,9 @@ import { removeFromSave, clearSave } from "@/lib/saveSlice";
 import { addToCart } from "@/lib/cartSlice";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
+import { store } from "@/lib/store";
+
+type RootState = ReturnType<typeof store.getState>;
 
 interface SaveSidebarProps {
   open: boolean;
@@ -20,14 +23,14 @@ interface SaveSidebarProps {
 
 const SaveSidebar = ({ open, onOpenChange }: SaveSidebarProps) => {
   const dispatch = useDispatch();
-  const savedItems = useSelector((state: any) => state.save.items);
+  const savedItems = useSelector((state: RootState) => state.save.items);
   const { toast } = useToast();
 
   const handleRemove = (id: number) => {
     dispatch(removeFromSave(id));
   };
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: SavedItem["product"]) => {
     dispatch(addToCart(product));
     dispatch(removeFromSave(product.id));
     toast({
@@ -44,17 +47,13 @@ const SaveSidebar = ({ open, onOpenChange }: SaveSidebarProps) => {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-lg">
         <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
-            <Heart className="h-5 w-5 text-red-500" />
-            Saved Items ({savedItems.length})
-          </SheetTitle>
+          <SheetTitle>Saved Items ({savedItems.length})</SheetTitle>
         </SheetHeader>
 
         <div className="flex flex-col h-full pb-4">
           <div className="flex-1 overflow-y-auto py-4">
             {savedItems.length === 0 ? (
               <div className="text-center py-8">
-                <Heart className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                 <p className="text-muted-foreground">No saved items yet</p>
                 <p className="text-sm text-muted-foreground mt-2">
                   Click the heart icon on products to save them for later

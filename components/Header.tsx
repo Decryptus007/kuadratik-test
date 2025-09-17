@@ -1,7 +1,6 @@
 import {
   MapPin,
   Search,
-  Globe,
   User,
   Heart,
   ShoppingCart,
@@ -26,7 +25,6 @@ import { useState } from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { store } from "@/lib/store";
-import { CartItem } from "@/lib/cartSlice";
 import CartSidebar from "./CartSidebar";
 import SaveSidebar from "./SaveSidebar";
 
@@ -129,10 +127,10 @@ const Header = ({
             <Button
               variant="ghost"
               size="icon"
-              className="sm:hidden"
+              className="sm:hidden size-8"
               onClick={() => setSearchOpen(!searchOpen)}
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-4 w-4" />
             </Button>
             <Select defaultValue="en">
               <SelectTrigger className="w-14 md:w-16 h-8 md:h-9 border-none text-xs md:text-sm">

@@ -2,6 +2,7 @@ import Providers from "./providers";
 import "./globals.css";
 
 export const metadata = {
+  metadataBase: new URL("https://kuadratik-test.vercel.app"),
   title: "Kuadratik Test - E-commerce Product Listing",
   description:
     "Discover and shop for the latest products at Kuadratik Test. High-quality e-commerce platform with curated product listings.",

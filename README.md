@@ -5,6 +5,7 @@ A modern, high-performance e-commerce platform built with Next.js 15, featuring 
 ## 🚀 Features
 
 - **High Performance**: Optimized with Next.js 15 Image optimization, lazy loading, and modern bundling
+- **Code Quality**: Linting-compliant code with removed unused dependencies and imports
 - **SEO Optimized**: Comprehensive metadata with Open Graph, Twitter Cards, and social sharing optimization
 - **Product Discovery**: Advanced filtering, sorting, and search capabilities
 - **Responsive Design**: Fully responsive across desktop, tablet, and mobile devices

@@ -1,4 +1,3 @@
-import { MapPin, Phone, Mail } from "lucide-react";
 import Image from "next/image";
 
 const Footer = () => {

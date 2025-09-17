@@ -1,5 +1,4 @@
-import { Star, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Star } from "lucide-react";
 import {
   Dialog,
   DialogContent,
