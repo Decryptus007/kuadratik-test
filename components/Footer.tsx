@@ -4,8 +4,8 @@ import Image from "next/image";
 const Footer = () => {
   return (
     <footer className="bg-foreground text-background mt-8 md:mt-16">
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+      <div className="pt-8 md:pt-12">
+        <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Company Info */}
           <div className="col-span-2 space-y-4 md:col-span-1">
             <div className="flex items-center gap-1">
@@ -119,7 +119,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-background/20 mt-6 md:mt-8 pt-6 md:pt-8 text-center text-xs md:text-sm text-background/60">
+        <div className="bg-black border-t border-background/20 mt-6 md:mt-8 py-3 md:py-4 text-center text-xs md:text-sm text-background/60">
           <p>© 2025 BAZAR. All rights reserved.</p>
         </div>
       </div>

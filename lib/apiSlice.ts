@@ -1,20 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { Product, ProductsResponse, CategoriesResponse } from "@/types";
 
-export interface Product {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  image: string;
-  rating: {
-    rate: number;
-    count: number;
-  };
-}
-
-type ProductsResponse = Product[];
-type CategoriesResponse = string[];
+// Re-export types for backward compatibility
+export type { Product, ProductsResponse, CategoriesResponse };
 
 export const apiSlice = createApi({
   reducerPath: "api",

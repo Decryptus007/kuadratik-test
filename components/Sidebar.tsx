@@ -4,18 +4,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Range } from "react-range";
-
-interface SidebarProps {
-  categories?: string[];
-  selectedCategory?: string | null;
-  onCategoryChange?: (category: string | null) => void;
-  priceRange?: [number, number];
-  onPriceRangeChange?: (range: [number, number]) => void;
-  selectedBrands?: string[];
-  onBrandsChange?: (brands: string[]) => void;
-  selectedTags?: string[];
-  onTagsChange?: (tags: string[]) => void;
-}
+import Image from "next/image";
+import { Button } from "./ui/button";
+import { ArrowRight, ShoppingCart } from "lucide-react";
+import { SidebarProps } from "@/types";
 
 const Sidebar = ({
   categories: apiCategories = [],
@@ -159,18 +151,22 @@ const Sidebar = ({
                 {children}
               </div>
             )}
-            renderThumb={({ props, isDragged }) => (
-              <div
-                {...props}
-                className={`w-4 h-4 bg-secondary rounded-full border-2 border-white shadow-md ${
-                  isDragged ? "shadow-lg" : ""
-                }`}
-                style={{
-                  ...props.style,
-                  outline: "none",
-                }}
-              />
-            )}
+            renderThumb={({ props, isDragged }) => {
+              const { key, ...otherProps } = props;
+              return (
+                <div
+                  key={key}
+                  {...otherProps}
+                  className={`w-4 h-4 bg-secondary rounded-full border-2 border-white shadow-md ${
+                    isDragged ? "shadow-lg" : ""
+                  }`}
+                  style={{
+                    ...otherProps.style,
+                    outline: "none",
+                  }}
+                />
+              );
+            }}
           />
         </div>
         <div className="grid grid-cols-2 gap-2 mb-2">
@@ -332,7 +328,7 @@ const Sidebar = ({
       </div>
 
       {/* Popular Tags */}
-      <div className="bg-card p-4">
+      <div className="bg-card p-4 mb-4">
         <h3 className="font-semibold mb-3 text-sm uppercase text-muted-foreground">
           Popular Tag
         </h3>
@@ -353,6 +349,43 @@ const Sidebar = ({
               </button>
             );
           })}
+        </div>
+      </div>
+
+      {/* Promo Product */}
+      <div className="bg-card flex items-center justify-center flex-col gap-4 p-4 md:p-6 border rounded-xl">
+        <Image
+          src="/assets/promo-side.png"
+          alt="Promo Product"
+          width={180}
+          height={180}
+        />
+        <Image
+          src="/assets/promo-side-desc.png"
+          alt="Promo Product Description"
+          width={132}
+          height={51}
+        />
+        <p className="text-2xl text-center font-semibold">
+          Heavy on Features.
+          <br />
+          Light on Price.
+        </p>
+        <div className="flex mx-auto items-center justify-center gap-2">
+          <p className="text-xs text-muted-foreground">Only for:</p>
+          <p className="text-base bg-[#CACACA] px-2 py-1 rounded-lg">
+            $299 USD
+          </p>
+        </div>
+        <div className="flex flex-col w-full gap-3">
+          <Button variant="secondary" className="uppercase">
+            <ShoppingCart className="h-4 w-4" />
+            Add to Cart
+          </Button>
+          <Button variant="outline" className="uppercase">
+            View Details
+            <ArrowRight className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </aside>

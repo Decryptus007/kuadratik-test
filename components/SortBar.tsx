@@ -6,25 +6,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Filter, X } from "lucide-react";
-
-interface SortBarProps {
-  totalProducts: number;
-  setMobileSidebarOpen: (open: boolean) => void;
-  searchQuery?: string;
-  selectedCategory?: string | null;
-  priceRange?: [number, number];
-  selectedBrands?: string[];
-  selectedTags?: string[];
-  sortBy?: string;
-  onSortChange?: (value: string) => void;
-  onClearSearch?: () => void;
-  onClearCategory?: () => void;
-  onClearPriceRange?: () => void;
-  onClearBrand?: (brand: string) => void;
-  onClearTag?: (tag: string) => void;
-  onClearAllFilters?: () => void;
-}
+import { Filter } from "lucide-react";
+import FilterButton from "./FilterButton";
+import { SortBarProps } from "@/types";
 
 const SortBar = ({
   totalProducts,
@@ -92,65 +76,44 @@ const SortBar = ({
 
           {/* Search Query Filter */}
           {searchQuery && (
-            <Button
-              variant="ghost"
-              size="sm"
+            <FilterButton
+              label={`Search: "${searchQuery}"`}
               onClick={onClearSearch}
-              className="h-6 px-2 text-xs text-primary hover:text-primary/80"
-            >
-              Search: "{searchQuery}" <X className="h-3 w-3 ml-1" />
-            </Button>
+            />
           )}
 
           {/* Category Filter */}
           {selectedCategory && (
-            <Button
-              variant="ghost"
-              size="sm"
+            <FilterButton
+              label={selectedCategory.replace(/['"]+/g, "")}
               onClick={onClearCategory}
-              className="h-6 px-2 text-xs text-primary hover:text-primary/80 capitalize"
-            >
-              {selectedCategory.replace(/['"]+/g, "")}{" "}
-              <X className="h-3 w-3 ml-1" />
-            </Button>
+            />
           )}
 
           {/* Price Range Filter */}
           {(priceRange[0] > 0 || priceRange[1] < 10000) && (
-            <Button
-              variant="ghost"
-              size="sm"
+            <FilterButton
+              label={`$${priceRange[0]} - $${priceRange[1]}`}
               onClick={onClearPriceRange}
-              className="h-6 px-2 text-xs text-primary hover:text-primary/80"
-            >
-              ${priceRange[0]} - ${priceRange[1]} <X className="h-3 w-3 ml-1" />
-            </Button>
+            />
           )}
 
           {/* Brand Filters */}
           {selectedBrands.map((brand) => (
-            <Button
+            <FilterButton
               key={brand}
-              variant="ghost"
-              size="sm"
+              label={brand}
               onClick={() => onClearBrand?.(brand)}
-              className="h-6 px-2 text-xs text-primary hover:text-primary/80"
-            >
-              {brand} <X className="h-3 w-3 ml-1" />
-            </Button>
+            />
           ))}
 
           {/* Tag Filters */}
           {selectedTags.map((tag) => (
-            <Button
+            <FilterButton
               key={tag}
-              variant="ghost"
-              size="sm"
+              label={tag}
               onClick={() => onClearTag?.(tag)}
-              className="h-6 px-2 text-xs text-primary hover:text-primary/80"
-            >
-              {tag} <X className="h-3 w-3 ml-1" />
-            </Button>
+            />
           ))}
 
           {/* Clear All Button */}
@@ -160,14 +123,7 @@ const SortBar = ({
             priceRange[1] < 10000 ||
             selectedBrands.length > 0 ||
             selectedTags.length > 0) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClearAllFilters}
-              className="h-6 px-2 text-xs text-destructive hover:text-destructive/80"
-            >
-              Clear All <X className="h-3 w-3 ml-1" />
-            </Button>
+            <FilterButton label="Clear All" onClick={onClearAllFilters} />
           )}
 
           {/* No active filters message */}

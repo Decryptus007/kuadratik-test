@@ -149,7 +149,7 @@ const Header = ({
             <Button
               variant="ghost"
               size="icon"
-              className="relative h-8 w-8 md:h-9 md:w-9"
+              className="relative h-8 w-8 md:h-9 md:w-9 hidden sm:flex"
             >
               <User className="h-4 w-4 md:h-5 md:w-5" />
             </Button>
@@ -157,7 +157,7 @@ const Header = ({
             <Button
               variant="ghost"
               size="icon"
-              className="relative h-8 w-8 md:h-9 md:w-9 hidden sm:flex"
+              className="relative h-8 w-8 md:h-9 md:w-9"
               onClick={() => setSaveOpen(true)}
             >
               <Heart className="h-4 w-4 md:h-5 md:w-5" />
