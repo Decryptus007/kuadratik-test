@@ -123,18 +123,17 @@ const Header = ({
             </div>
           </div>
 
-          {/* Mobile Search Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="sm:hidden"
-            onClick={() => setSearchOpen(!searchOpen)}
-          >
-            <Search className="h-5 w-5" />
-          </Button>
-
           {/* Right Actions */}
           <div className="flex items-center gap-2 md:gap-4">
+            {/* Mobile Search Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="sm:hidden"
+              onClick={() => setSearchOpen(!searchOpen)}
+            >
+              <Search className="h-5 w-5" />
+            </Button>
             <Select defaultValue="en">
               <SelectTrigger className="w-14 md:w-16 h-8 md:h-9 border-none text-xs md:text-sm">
                 <SelectValue />
