@@ -132,6 +132,8 @@ kuadratik/
 - `npm run build` - Production build with optimizations
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint for code quality
+- `npm test` - Run unit tests with Jest
+- `npm run test:watch` - Run tests in watch mode
 
 ## 🎨 Architecture & Optimizations
 
@@ -183,6 +185,83 @@ kuadratik/
 - Slide-out navigation and filters
 - Responsive carousels and images
 - Optimized for all device sizes
+
+## 🧪 Testing
+
+This project uses **Jest** and **React Testing Library** for unit testing. The setup includes:
+
+### Testing Framework
+
+- **Jest** - JavaScript testing framework
+- **React Testing Library** - Testing utilities for React components
+- **Jest DOM** - Custom matchers for DOM testing
+- **jsdom** - DOM implementation for Node.js
+
+### Configuration Files
+
+- `jest.config.js` - Jest configuration with Next.js integration
+- `jest.setup.js` - Global test setup (imports jest-dom)
+
+### Writing Tests
+
+Create test files alongside your components using the pattern:
+
+```typescript
+// components/MyComponent.test.tsx
+import { render, screen } from "@testing-library/react";
+import MyComponent from "./MyComponent";
+
+describe("MyComponent", () => {
+  it("renders correctly", () => {
+    render(<MyComponent />);
+    expect(screen.getByText("Hello")).toBeInTheDocument();
+  });
+});
+```
+
+### Project Structure for Tests
+
+```
+├── lib/
+│   └── __tests__/
+│       ├── cartSlice.test.ts    # Redux cart slice tests
+│       └── saveSlice.test.ts    # Redux save slice tests
+```
+
+### Best Practices
+
+- Use `describe` blocks to group related tests
+- Use descriptive test names that explain what behavior is being tested
+- Prefer `.test.tsx` extension for React component tests
+- Use `__tests__` directories for utility function tests
+- Mock external dependencies as needed
+- Use `screen` queries from React Testing Library for accessibility-focused testing
+
+### Example Component Test
+
+```typescript
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Button } from "./ui/button";
+
+describe("Button", () => {
+  it("renders with correct text", () => {
+    render(<Button>Click me</Button>);
+    expect(
+      screen.getByRole("button", { name: "Click me" })
+    ).toBeInTheDocument();
+  });
+
+  it("calls onClick when clicked", async () => {
+    const user = userEvent.setup();
+    const onClick = jest.fn();
+    render(<Button onClick={onClick}>Click me</Button>);
+
+    await user.click(screen.getByRole("button"));
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+});
+```
 
 ## 🔧 Configuration
 
